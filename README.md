@@ -12,60 +12,62 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
 - [MyPet](#mypet)
 - [Endpoints](#endpoints)
   - [Serviços](#serviços)
-    - [Cadastrar Serviço](#cadastrar-serviço)
-    - [Editar serviço](#editar-serviço)
-    - [Deletar serviço](#deletar-serviço)
+    - [Cadastrar Serviço](#cadastrar-serviços)
+    - [Editar serviço](#editar-serviços)
+    - [Deletar serviço](#deletar-serviços)
     - [Listar Serviços](#listar-serviços)
+  - [Usuarios](#usuarios)
+    - [Cadastrar usuario](#cadastrar-usuarios)
+    - [Editar usuario](#editar-usuarios)
+    - [Deletar usuario](#deletar-usuarios)
+    - [Listar usuario](#listar-usuarios)
 ---
 
 ## Serviços
 
-### Cadastrar Serviço
+### Cadastrar Serviços
 
-`POST`/mypet/api/user/{userId}/servico
+`POST`/mypet/api/servicos
 
 **Campos de Requisição**
 
 | campo      | tipo      | obrigatório | descrição                            |
 | ---------- | --------- | :---------: | ------------------------------------ |
-| id_usuario | int       |     sim     | id do usuário previamente cadastrado |
-| id_servico | int       |     sim     | id do serviço |
-| nm_servico | texto     |     sim     | o nome do serviço                    |
-| pc_servico | double    |     sim     | o preço do serviço                   |
-| ds_servico | texto     |     sim     | descrição sobre o serviço            |
-| img_servico| byte      |     sim     | imagem do tipo de serviço  
+| nome       | texto     |     sim     | o nome do serviço                    |
+| preco      | double    |     sim     | o preço do serviço                   |
+| descricao  | texto     |     sim     | descrição sobre o serviço            |
+| imagem     | byte      |     sim     | imagem do tipo de serviço            |
 
 **Exemplo de corpo de requisição**
 
 ```js
 {
-    id_usuario: 1,
     nome: 'Banho e tosa',
     preco:'75.00',
     descricao:'Deixe seu pet limpo e cheiroso',
-    imagem: ''
+    imagem: 'path/arquivo.png'
 }
 ```
 
 **Códigos de Resposta**
 
-| codigo | descricao                    |
-| ------ | ---------------------------- |
-| 201    | curso cadastrado com sucesso |
-| 400    | campos inválidos             |
-| 408    | tempo esgotado               |
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 201    | serviço criado com sucesso                                |
+| 404    | Campos inválidos                                          |
+| 409    | Conflict - Já existe um serviço com o mesmo email         |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
 
 ---
 
-### Editar serviço
+### Editar serviços
 
-`PUT` /mypet/api/user/{userId}/curso/{cursoId}
+`PUT` /mypet/api/servicos/{servicoId}
 
 **Campos de Requisição**
 
 | campo      | tipo      | obrigatório | descrição                            |
 | ---------- | --------- | :---------: | ------------------------------------ |
-| id_usuario | int       |     sim     | id do usuário previamente cadastrado |
 | nome       | texto     |     sim     | o nome do serviço                    |
 | preco      | double    |     sim     | o preço do serviço                   |
 | descricao  | texto     |     sim     | descrição sobre o serviço            |
@@ -85,56 +87,44 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
 
 **Códigos de Repostas**
 
-| codigo | descricao                             |
-| ------ | ------------------------------------- |
-| 200    | serviço alterado com sucesso          |
-| 400    | campos inválidos                      |
-| 404    | não existe serviço com o id informado |
-| 408    | tempo esgotado                        |
-| 500    | internal server error                 |
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 200    | Serviço atualizado com sucesso                            |
+| 404    | O serviço não foi localizado                              |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
 
 ---
 
-### Deletar serviço
+### Deletar serviços
 
-`DELETE` /mypet/api/user/{userid}/servico/{servicoId}
+`DELETE` /mypet/api/servicos/{servicoId}
 
-**Campos de Requisição**
-
-| campo      | tipo      | obrigatório | descrição                            |
-| ---------- | --------- | :---------: | ------------------------------------ |
-| id_usuario | int       |     sim     | id do usuário previamente cadastrado |
-| nome       | texto     |     sim     | o nome do serviço                    |
-| preco      | double    |     sim     | o preço do serviço                   |
-| descricao  | texto     |     sim     | descrição sobre o serviço            |
-| imagem     | byte      |     sim     | imagem do tipo de serviço            |
 
 **Exemplo de corpo de requisição**
 
 ```js
 {
-    usuario{
-        id_usuarui:1
-    }
+    id_servico: 1,
     nome: 'Banho e tosa',
     preco:'75.00',
     descricao:'Deixe seu pet limpo e cheiroso',
-    imagem: ''
+    imagem: 'path/arquivo.png'
 }
 ```
 
 **Códigos de Repostas**
 
-| codigo | descricao                           |
-| ------ | ----------------------------------- |
-| 200    | curso removido com sucesso          |
-| 404    | não existe curso com o id informado |
-| 408    | tempo esgotado                      |
-| 500    | internal server error               |
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 200    | Serviço removido com sucesso                              |
+| 404    | O serviço não foi localizado                              |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
 
 ---
 
 ### Listar Serviços
+
+
 
 `GET` /mypet/api/servicos
 
@@ -159,12 +149,128 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
 
 **Códigos de Repostas**
 
-| codigo | descricao                  |
-| ------ | -------------------------- |
-| 200    | dados do cursos retornados |
-| 404    | cursos não encontrados     |
-| 500    | internal server error      |
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 200    | Retorna uma lista de todos serviços                       |
+| 404    | A lista de serviços não foi localizada                    |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
 
 <br>
 
 ---
+
+## Usuarios
+
+### Cadastrar usuarios
+
+`POST` /mypet/api/usuarios
+
+
+**Campos da Requisição**
+
+|   campo  | tipo  | obrigatório | descrição                            |
+| -------- | ----- | :---------: | ------------------------------------ |
+| nome     | texto |     sim     | Nome completo do usuário             |
+| email    | texto |     sim     | E-mail do usuário                    |
+| cpf      | texto |     sim     | número de registro do usuário        |
+| telefone | texto |     sim     | número de telefone do usuário        |
+| senha    | texto |     sim     | o valor deve ter no minimo 8 digitos |
+
+**Exemplo corpo requisição**
+
+```js
+{
+
+ nome:  "Igor Camargo",
+ email: "igor.cammargo@gmail.com",
+ cpf:   "44877544550",
+ senha: "123",
+ avatar:"path/arquivo.png"
+}
+```
+
+**Códigos de Respostas**
+
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 201    | Usuário criado com sucesso                                |
+| 404    | Campos inválidos                                          |
+| 409    | Conflict - Já existe um usuário com o mesmo email         |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
+### Editar usuarios
+
+`PUT` /mypet/api/usuarios/{id}
+
+**Campos da Requisição**
+
+|   campo  | tipo  | obrigatório | descrição                            |
+| -------- | ----- | :---------: | ------------------------------------ |
+| email    | texto |     sim     | E-mail do usuário                    |
+| telefone | texto |     sim     | número de telefone do usuário        |
+| senha    | texto |     sim     | o valor deve ter no minimo 8 digitos |
+
+**Exemplo corpo requisição**
+
+```js
+{
+ email: "igor.cammargo@gmail.com",
+ senha: "123",
+ avatar:"path/arquivo.png"
+}
+```
+
+**Códigos de Respostas**
+
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 200    | Usuário atualizado com sucesso                            |
+| 404    | O usuário não foi localizado                              |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
+
+
+### Deletar usuarios
+
+`DELETE` /mypet/api/usuarios/{id}
+
+**Códigos de Respostas**
+
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 200    | Usuário removido com sucesso                              |
+| 404    | O usuário não foi localizado                              |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
+
+### Listar usuarios
+
+`GET` /mypet/api/usuarios
+
+**Exemplo corpo requisição**
+
+```js
+{
+
+ nome:  "Igor Camargo",
+ email: "igor.cammargo@gmail.com",
+ cpf:   "44877544550",
+ senha: "12345678",
+ avatar:"path/arquivo.png"
+},
+{
+    nome:  "Raphael Serrano",
+    email: "rapha.serrano@gmail.com",
+    cpf:   "451225",
+    senha: "87654321",
+    avatar:"path/arquivo.png"
+}
+```
+
+**Códigos de Respostas**
+
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 200    | Retorna uma lista de todos usuários                       |
+| 404    | A lista de usuários não foi localizada                    |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
+
+
+
