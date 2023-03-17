@@ -12,15 +12,20 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
 - [MyPet](#mypet)
 - [Endpoints](#endpoints)
   - [Serviços](#serviços)
-    - [Cadastrar Serviço](#cadastrar-serviços)
-    - [Editar serviço](#editar-serviços)
-    - [Deletar serviço](#deletar-serviços)
+    - [Cadastrar Serviços](#cadastrar-serviços)
+    - [Editar serviços](#editar-serviços)
+    - [Deletar serviços](#deletar-serviços)
     - [Listar Serviços](#listar-serviços)
   - [Usuarios](#usuarios)
-    - [Cadastrar usuario](#cadastrar-usuarios)
-    - [Editar usuario](#editar-usuarios)
-    - [Deletar usuario](#deletar-usuarios)
-    - [Listar usuario](#listar-usuarios)
+    - [Cadastrar usuarios](#cadastrar-usuarios)
+    - [Editar usuarios](#editar-usuarios)
+    - [Deletar usuarios](#deletar-usuarios)
+    - [Listar usuarios](#listar-usuarios)
+  - [Pagamentos](#pagamentos)
+    - [Cadastrasr pagamentos](#cadastrasr-pagamentos)
+    - [Editar pagamentos](#editar-pagamentos)
+  - [Deletar pagamentos](#deletar-pagamentos)
+    - [Listar pagamento](#listar-pagamento)
 ---
 
 ## Serviços
@@ -55,7 +60,7 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
 | ------ | --------------------------------------------------------- |
 | 201    | serviço criado com sucesso                                |
 | 404    | Campos inválidos                                          |
-| 409    | Conflict - Já existe um serviço com o mesmo email         |
+| 409    | Conflict - Já existe um serviço com o mesmo nome          |
 | 500    | Ocorreu um erro interno enquanto processava a solicitação |
 
 ---
@@ -272,5 +277,112 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
 | 404    | A lista de usuários não foi localizada                    |
 | 500    | Ocorreu um erro interno enquanto processava a solicitação |
 
+<br>
+
+---
+
+## Pagamentos
+
+### Cadastrasr pagamentos
 
 
+`POST` mypet/api/pagamentos
+
+**Campos da Requisição**
+
+|   campo          | tipo  | obrigatório | descrição                            |
+| ---------------- | ----- | :---------: | ------------------------------------ |
+| tp_pagamento     | texto |     sim     | Qual o meio de pagamento             |
+| tp_cartao        | texto |     não     | bandeira do cartão usado             |
+
+
+**Exemplo corpo requisição**
+
+```js
+{
+    tp_pagamento:"cartão de débito",
+    tp_cartao:"visa"
+}
+
+```
+
+**Códigos de Respostas**
+
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 201    | Pagamento criado com sucesso                              |
+| 404    | Campos inválidos                                          |
+| 409    | Conflict - Já existe um pagamento com o mesmo nome        |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
+
+### Editar pagamentos
+
+`PUT` mypet/api/pagamentos/{id}
+
+**Campos da Requisição**
+
+|   campo          | tipo  | obrigatório | descrição                            |
+| ---------------- | ----- | :---------: | ------------------------------------ |
+| tp_pagamento     | texto |     sim     | Qual o meio de pagamento             |
+| tp_cartao        | texto |     não     | bandeira do cartão usado             |
+
+**Exemplo corpo requisição**
+
+```js
+{
+    tp_pagamento:"pix",
+    tp_cartao:""
+}
+
+```
+
+**Códigos de Repostas**
+
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 200    | Pagamento atualizado com sucesso                          |
+| 404    | O tipo de pagamento não foi localizado                    |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
+
+## Deletar pagamentos
+
+`DELETE` /mypet/api/pagamentos/{id}
+
+**Códigos de Respostas**
+
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 200    | Tipo de pagamento removido com sucesso                    |
+| 404    | O tipo de pagamento não foi localizado                    |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
+
+### Listar pagamento
+
+`GET` mypet/api/pagamentos
+
+**Exemplo corpo requisição**
+
+```js
+{
+    tp_pagamento:"cartão de débito",
+    tp_cartao:"visa"
+},
+{
+    tp_pagamento:"pix",
+    tp_cartao:""
+},
+{
+    tp_pagamento:"dinheiro",
+    tp_cartao:""
+}
+```
+
+**Códigos de Respostas**
+
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 200    | Retorna uma lista de todos os tipos de pagamento          |
+| 404    | A lista de pagamento não foi localizada                   |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
+
+---
