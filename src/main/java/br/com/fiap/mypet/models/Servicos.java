@@ -3,28 +3,28 @@ package br.com.fiap.mypet.models;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Servico {
-    private List<Servico> servicos;
+public class Servicos {
+    private List<Servicos> servicos;
 
     public void Servicos() {
         this.servicos = new ArrayList<>();
     }
 
-    public List<Servico> getServicos() {
+    public List<Servicos> getServicos() {
 		return servicos;
 	}
 
-	public void setServicos(List<Servico> servicos) {
+	public void setServicos(List<Servicos> servicos) {
 		this.servicos = servicos;
 	}
 
-	public void cadastrarServico(Servico servico) {
+	public void cadastrarServico(Servicos servico) {
         this.servicos.add(servico);
         System.out.println("Servi�o cadastrado com sucesso!");
     }
 
     public void editarServico(String nome, double novoPreco) {
-        for (Servico servico : this.servicos) {
+        for (Servicos servico : this.servicos) {
             if (servico.getNome().equalsIgnoreCase(nome)) {
                 servico.setPreco(novoPreco);
                 System.out.println("Servi�o editado com sucesso!");
@@ -40,7 +40,7 @@ public class Servico {
 	}
 
 	public void deletarServico(String nome) {
-        for (Servico servico : this.servicos) {
+        for (Servicos servico : this.servicos) {
             if (servico.getNome().equalsIgnoreCase(nome)) {
                 this.servicos.remove(servico);
                 System.out.println("Servi�o deletado com sucesso!");
@@ -57,7 +57,7 @@ public class Servico {
 
 	public void listarServicos() {
         System.out.println("Lista de servi�os:");
-        for (Servico servico : this.servicos) {
+        for (Servicos servico : this.servicos) {
             System.out.println("Nome: " + servico.getNome() + " | Pre�o: R$" + servico.getPreco());
         }
     }
@@ -66,4 +66,8 @@ public class Servico {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    public Object getData() {
+        return null;
+    }
 }

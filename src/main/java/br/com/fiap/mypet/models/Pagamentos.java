@@ -59,4 +59,8 @@ public class Pagamentos {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    public Object getData() {
+        return null;
+    }
 }

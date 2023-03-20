@@ -12,7 +12,7 @@ public class Usuarios {
 
     public void cadastrarUsuario(Usuarios usuario) {
         this.usuarios.add(usuario);
-        System.out.println("Usu�rio cadastrado com sucesso!");
+        System.out.println("Usuário cadastrado com sucesso!");
     }
 
     public void editarUsuario(String email, String novoNome, String novaSenha) {
@@ -20,11 +20,11 @@ public class Usuarios {
             if (usuario.getEmail().equalsIgnoreCase(email)) {
                 usuario.setNome(novoNome);
                 usuario.setSenha(novaSenha);
-                System.out.println("Usu�rio editado com sucesso!");
+                System.out.println("Usuário editado com sucesso!");
                 return;
             }
         }
-        System.out.println("Usu�rio n�o encontrado.");
+        System.out.println("Usuário não encontrado.");
     }
 
     private void setSenha(String novaSenha) {
@@ -37,7 +37,7 @@ public class Usuarios {
 		
 	}
 
-	private String getEmail() {
+	public String getEmail() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -46,15 +46,15 @@ public class Usuarios {
         for (Usuarios usuario : this.usuarios) {
             if (usuario.getEmail().equalsIgnoreCase(email)) {
                 this.usuarios.remove(usuario);
-                System.out.println("Usu�rio deletado com sucesso!");
+                System.out.println("Usuário deletado com sucesso!");
                 return;
             }
         }
-        System.out.println("Usu�rio n�o encontrado.");
+        System.out.println("Usuário não encontrado.");
     }
 
     public void listarUsuarios() {
-        System.out.println("Lista de usu�rios:");
+        System.out.println("Lista de usuários:");
         for (Usuarios usuario : this.usuarios) {
             System.out.println("Nome: " + usuario.getNome() + " | Email: " + usuario.getEmail());
         }

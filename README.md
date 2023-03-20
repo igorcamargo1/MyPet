@@ -22,10 +22,12 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
     - [Deletar usuarios](#deletar-usuarios)
     - [Listar usuarios](#listar-usuarios)
   - [Pagamentos](#pagamentos)
-    - [Cadastrasr pagamentos](#cadastrasr-pagamentos)
+    - [Cadastrar pagamentos](#cadastrar-pagamentos)
     - [Editar pagamentos](#editar-pagamentos)
-  - [Deletar pagamentos](#deletar-pagamentos)
+    - [Deletar pagamentos](#deletar-pagamentos)
     - [Listar pagamento](#listar-pagamento)
+  - [Animais](#animais)
+    - [Cadastrar Serviços](#cadastrar-serviços-1)
 ---
 
 ## Serviços
@@ -283,7 +285,7 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
 
 ## Pagamentos
 
-### Cadastrasr pagamentos
+### Cadastrar pagamentos
 
 
 `POST` mypet/api/pagamentos
@@ -344,7 +346,7 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
 | 404    | O tipo de pagamento não foi localizado                    |
 | 500    | Ocorreu um erro interno enquanto processava a solicitação |
 
-## Deletar pagamentos
+### Deletar pagamentos
 
 `DELETE` /mypet/api/pagamentos/{id}
 
@@ -383,6 +385,43 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
 | ------ | --------------------------------------------------------- |
 | 200    | Retorna uma lista de todos os tipos de pagamento          |
 | 404    | A lista de pagamento não foi localizada                   |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
+
+---
+
+## Animais
+
+### Cadastrar Serviços
+
+`POST`/mypet/api/servicos
+
+**Campos de Requisição**
+
+| campo      | tipo      | obrigatório | descrição                            |
+| ---------- | --------- | :---------: | ------------------------------------ |
+| nome       | texto     |     sim     | o nome do serviço                    |
+| preco      | double    |     sim     | o preço do serviço                   |
+| descricao  | texto     |     sim     | descrição sobre o serviço            |
+| imagem     | byte      |     sim     | imagem do tipo de serviço            |
+
+**Exemplo de corpo de requisição**
+
+```js
+{
+    nome: 'Banho e tosa',
+    preco:'75.00',
+    descricao:'Deixe seu pet limpo e cheiroso',
+    imagem: 'path/arquivo.png'
+}
+```
+
+**Códigos de Resposta**
+
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 201    | serviço criado com sucesso                                |
+| 404    | Campos inválidos                                          |
+| 409    | Conflict - Já existe um serviço com o mesmo nome          |
 | 500    | Ocorreu um erro interno enquanto processava a solicitação |
 
 ---
