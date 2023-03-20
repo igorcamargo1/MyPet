@@ -27,7 +27,9 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
     - [Deletar pagamentos](#deletar-pagamentos)
     - [Listar pagamento](#listar-pagamento)
   - [Animais](#animais)
-    - [Cadastrar Serviços](#cadastrar-serviços-1)
+    - [Cadastrar animais](#cadastrar-animais)
+    - [Deletar animais](#deletar-animais)
+    - [Listar animais](#listar-animais)
 ---
 
 ## Serviços
@@ -391,27 +393,29 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
 
 ## Animais
 
-### Cadastrar Serviços
+### Cadastrar animais
 
-`POST`/mypet/api/servicos
+`POST`/mypet/api/animais
 
 **Campos de Requisição**
 
 | campo      | tipo      | obrigatório | descrição                            |
 | ---------- | --------- | :---------: | ------------------------------------ |
-| nome       | texto     |     sim     | o nome do serviço                    |
-| preco      | double    |     sim     | o preço do serviço                   |
-| descricao  | texto     |     sim     | descrição sobre o serviço            |
-| imagem     | byte      |     sim     | imagem do tipo de serviço            |
+| nome       | texto     |     sim     | o nome do animal                     |
+| idade      | int       |     sim     | a idade do animal                    |
+| especie    | texto     |     sim     | a especie do animal                  |
+| raca       | texto     |     sim     | raça do animal                       |
+| vacinado   | boolean   |     sim     | se o animal é vacinado ou não        |
 
 **Exemplo de corpo de requisição**
 
 ```js
 {
-    nome: 'Banho e tosa',
-    preco:'75.00',
-    descricao:'Deixe seu pet limpo e cheiroso',
-    imagem: 'path/arquivo.png'
+    nome:"Bob",
+    idade:2,
+    especie:"cachorro",
+    raca:"boxer",
+    vacinado:true
 }
 ```
 
@@ -419,9 +423,72 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
 
 | código | descrição                                                 |
 | ------ | --------------------------------------------------------- |
-| 201    | serviço criado com sucesso                                |
+| 201    | animal criado com sucesso                                 |
 | 404    | Campos inválidos                                          |
-| 409    | Conflict - Já existe um serviço com o mesmo nome          |
 | 500    | Ocorreu um erro interno enquanto processava a solicitação |
 
 ---
+
+### Deletar animais
+`DELETE` /mypet/api/animais/{animaisId}
+
+
+**Exemplo de corpo de requisição**
+
+```js
+{
+    nome:"Bob",
+    idade:2,
+    especie:"cachorro",
+    raca:"boxer",
+    vacinado:true
+}
+```
+
+**Códigos de Repostas**
+
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 200    | Animal removido com sucesso                               |
+| 404    | O animal não foi localizado                               |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
+
+---
+
+### Listar animais
+
+`GET` /mypet/api/animais
+
+**Exemplo de corpo de requisição**
+
+```js
+{
+    nome:"Bob",
+    idade:2,
+    especie:"cachorro",
+    raca:"boxer",
+    vacinado:true
+},
+{
+    nome:"Susy",
+    idade:8,
+    especie:"cachorro",
+    raca:"pincher",
+    vacinado:true
+},
+{
+    nome:"Miau",
+    idade:8,
+    especie:"gato",
+    raca:"american curl",
+    vacinado:true
+}
+```
+
+**Códigos de Respostas**
+
+| código | descrição                                                 |
+| ------ | --------------------------------------------------------- |
+| 200    | Retorna uma lista de todos os animais                     |
+| 404    | Os animais não foram localizados                          |
+| 500    | Ocorreu um erro interno enquanto processava a solicitação |
