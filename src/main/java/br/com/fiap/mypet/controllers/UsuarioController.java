@@ -39,7 +39,7 @@ public class UsuarioController {
         : ResponseEntity.ok(usuarios);
     }
 
-    //Get
+    //Get by ID
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> show(@PathVariable Long id){
 

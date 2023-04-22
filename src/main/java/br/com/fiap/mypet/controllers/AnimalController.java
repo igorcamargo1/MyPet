@@ -39,7 +39,7 @@ public class AnimalController {
         : ResponseEntity.ok(animais);
     }
 
-    //Get
+    //Get by ID
     @GetMapping("/{id}")
     public ResponseEntity<Animal> show(@PathVariable Long id){
 

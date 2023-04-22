@@ -39,7 +39,7 @@ public class PagamentoController {
         : ResponseEntity.ok(pagamentos);
     }
 
-    //Get
+    //Get by ID
     @GetMapping("/{id}")
     public ResponseEntity<Pagamento> show(@PathVariable Long id){
 

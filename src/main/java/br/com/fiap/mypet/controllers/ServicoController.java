@@ -39,7 +39,7 @@ public class ServicoController {
         : ResponseEntity.ok(servicos);
     }
 
-    //Get
+    //Get by ID
     @GetMapping("/{id}")
     public ResponseEntity<Servico> show(@PathVariable Long id){
 
