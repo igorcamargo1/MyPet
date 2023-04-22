@@ -1,10 +1,31 @@
 package br.com.fiap.mypet.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+
+@Entity
 public class Animal {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank
     private String nome;
+
+    @NotBlank
     private int idade;
+
+    @NotBlank
     private String especie;
+
+    @NotBlank
     private String raca;
+
+    @NotBlank
     private boolean vacinado;
 
     public Animal(String nome, int idade, String especie, String raca, boolean vacinado) {
@@ -13,6 +34,18 @@ public class Animal {
         this.especie = especie;
         this.raca = raca;
         this.vacinado = vacinado;
+    }
+
+    protected Animal(){
+
+    }
+
+    public Long getId(){
+        return id;
+    }
+
+    public void setId(Long id){
+        this.id = id;
     }
 
     public String getNome() {

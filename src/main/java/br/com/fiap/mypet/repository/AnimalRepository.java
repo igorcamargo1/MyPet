@@ -1,5 +1,11 @@
 package br.com.fiap.mypet.repository;
 
-public class AnimalRepository {
-    
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import br.com.fiap.mypet.models.Animal;
+
+@Repository
+public interface AnimalRepository extends JpaRepository<Animal, Long> {
+
 }

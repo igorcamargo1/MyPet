@@ -1,45 +1,91 @@
 package br.com.fiap.mypet.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import br.com.fiap.mypet.exceptions.ErroResponseExceptions;
+import br.com.fiap.mypet.exceptions.RestNotFoundException;
 import br.com.fiap.mypet.models.Animal;
+import br.com.fiap.mypet.repository.AnimalRepository;
+import jakarta.validation.Valid;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
+@RequestMapping("api/animal")
 public class AnimalController {
     
-    private ArrayList<Animal> animais;
+    @Autowired
+    private AnimalRepository animalRepository;
 
-    public AnimalController() {
-        this.animais = new ArrayList<>();
+    //Get all
+    @GetMapping
+    public ResponseEntity<List<Animal>> show(){
+        List<Animal> animais = animalRepository.findAll();
+        
+        return animais.isEmpty()
+        ? ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+        : ResponseEntity.ok(animais);
     }
 
-    @PostMapping("/api/animal")
-    public void adicionarAnimal(Animal animal) {
-        this.animais.add(animal);
+    //Get
+    @GetMapping("/{id}")
+    public ResponseEntity<Animal> show(@PathVariable Long id){
+
+        var animaisEncontrados = animalRepository.findById(id)
+                .orElseThrow(() -> new RestNotFoundException("Animal não encontrado"));
+        ;
+        return ResponseEntity.ok(animaisEncontrados);
     }
 
-    @GetMapping("/api/animais")
-    public ArrayList<Animal> listarAnimais() {
-        return this.animais;
-    }
+    //Post
+    @ResponseBody
+    @PostMapping
+    public ResponseEntity<?> create(@Valid @RequestBody Animal animal){
+        Optional<Animal> animalExistente = animalRepository.findById(animal.getId());
 
-    @GetMapping("/api/animais/{id}")
-    public Animal buscarAnimalPorNome(String nome) {
-        for (Animal animal : animais) {
-            if (animal.getNome().equals(nome)) {
-                return animal;
-            }
+        if(animalExistente.isPresent()){
+            return ResponseEntity.badRequest().body(new ErroResponseExceptions("Id já cadastrado").getMessage());
         }
-        return null;
-    } 
-    
-    @DeleteMapping("/api/animais/{id}")
-    public void removerAnimal(Animal animal) {
-        this.animais.remove(animal);
+
+        animalRepository.save(animal);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(animal);
     }
+
+    //Put
+    @PutMapping
+    public ResponseEntity<Animal> update(@Valid @RequestBody Animal animal){
+
+        animalRepository.findById(animal.getId())
+                .orElseThrow(() -> new RestNotFoundException("Animal não encontrado"));
+
+        animalRepository.save(animal);
+        return ResponseEntity.ok().body(animal);
+    }
+
+    // DELETE
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Animal> delete(@PathVariable Long id) {
+
+        var animaisEncontrado = animalRepository.findById(id)
+                .orElseThrow(() -> new RestNotFoundException("Animal não encontrado"));
+        ;
+        animalRepository.delete(animaisEncontrado);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }
