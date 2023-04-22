@@ -1,13 +1,13 @@
 package br.com.fiap.mypet.models;
 
-public class Animais {
+public class Animal {
     private String nome;
     private int idade;
     private String especie;
     private String raca;
     private boolean vacinado;
 
-    public Animais(String nome, int idade, String especie, String raca, boolean vacinado) {
+    public Animal(String nome, int idade, String especie, String raca, boolean vacinado) {
         this.nome = nome;
         this.idade = idade;
         this.especie = especie;
