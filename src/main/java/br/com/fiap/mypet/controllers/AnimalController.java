@@ -6,31 +6,31 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-import br.com.fiap.mypet.models.Animais;
+import br.com.fiap.mypet.models.Animal;
 import java.util.ArrayList;
 
 @RestController
-public class AnimaisController {
+public class AnimalController {
     
-    private ArrayList<Animais> animais;
+    private ArrayList<Animal> animais;
 
-    public AnimaisController() {
+    public AnimalController() {
         this.animais = new ArrayList<>();
     }
 
     @PostMapping("/api/animal")
-    public void adicionarAnimal(Animais animal) {
+    public void adicionarAnimal(Animal animal) {
         this.animais.add(animal);
     }
 
     @GetMapping("/api/animais")
-    public ArrayList<Animais> listarAnimais() {
+    public ArrayList<Animal> listarAnimais() {
         return this.animais;
     }
 
     @GetMapping("/api/animais/{id}")
-    public Animais buscarAnimalPorNome(String nome) {
-        for (Animais animal : animais) {
+    public Animal buscarAnimalPorNome(String nome) {
+        for (Animal animal : animais) {
             if (animal.getNome().equals(nome)) {
                 return animal;
             }
@@ -39,7 +39,7 @@ public class AnimaisController {
     } 
     
     @DeleteMapping("/api/animais/{id}")
-    public void removerAnimal(Animais animal) {
+    public void removerAnimal(Animal animal) {
         this.animais.remove(animal);
     }
 }

@@ -193,8 +193,8 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
  nome:  "Igor Camargo",
  email: "igor.cammargo@gmail.com",
  cpf:   "44877544550",
+ telefone: "11 944560954",
  senha: "123",
- avatar:"path/arquivo.png"
 }
 ```
 
@@ -223,8 +223,8 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
 ```js
 {
  email: "igor.cammargo@gmail.com",
+  telefone: "11 944560444",
  senha: "123",
- avatar:"path/arquivo.png"
 }
 ```
 
@@ -261,15 +261,15 @@ Uma API de petshop no qual o cliente pode escolher o serviço que deseja usar.
  nome:  "Igor Camargo",
  email: "igor.cammargo@gmail.com",
  cpf:   "44877544550",
+ telefone: "11 944560984",
  senha: "12345678",
- avatar:"path/arquivo.png"
 },
 {
-    nome:  "Raphael Serrano",
-    email: "rapha.serrano@gmail.com",
-    cpf:   "451225",
-    senha: "87654321",
-    avatar:"path/arquivo.png"
+ nome:  "Raphael Serrano",
+ email: "rapha.serrano@gmail.com",
+ cpf:   "451225",
+ telefone: "11 944578454",
+ senha: "87654321",
 }
 ```
 
