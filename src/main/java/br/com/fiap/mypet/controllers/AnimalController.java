@@ -1,6 +1,11 @@
 package br.com.fiap.mypet.controllers;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,78 +18,89 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.fiap.mypet.exceptions.ErroResponseExceptions;
 import br.com.fiap.mypet.exceptions.RestNotFoundException;
 import br.com.fiap.mypet.models.Animal;
 import br.com.fiap.mypet.repository.AnimalRepository;
 import jakarta.validation.Valid;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
-@RequestMapping("api/animal")
+@RequestMapping("/api/animais")
 public class AnimalController {
+
+    Logger log = LoggerFactory.getLogger(AnimalController.class);
     
     @Autowired
-    private AnimalRepository animalRepository;
+    private AnimalRepository repository;
 
-    //Get all
+    @Autowired
+    PagedResourcesAssembler<Object> assembler;
+
+    //--------------------------------------------------------------------------------------
+    //GET ALL
     @GetMapping
-    public ResponseEntity<List<Animal>> show(){
-        List<Animal> animais = animalRepository.findAll();
+    public ResponseEntity<List<Animal>> index(){
+        List<Animal> animais = repository.findAll();
         
         return animais.isEmpty()
         ? ResponseEntity.status(HttpStatus.NOT_FOUND).build()
         : ResponseEntity.ok(animais);
     }
 
-    //Get by ID
+    //--------------------------------------------------------------------------------------
+    //GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<Animal> show(@PathVariable Long id){
-
-        var animaisEncontrados = animalRepository.findById(id)
-                .orElseThrow(() -> new RestNotFoundException("Animal não encontrado"));
-        ;
-        return ResponseEntity.ok(animaisEncontrados);
+    public EntityModel<Animal> show(@PathVariable Integer id) {
+        log.info("buscando animal com id " + id);
+        return getAnimal(id).toEntityModel();
     }
 
-    //Post
+    //--------------------------------------------------------------------------------------
+    //POST
     @ResponseBody
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody Animal animal){
-        Optional<Animal> animalExistente = animalRepository.findById(animal.getId());
-
-        if(animalExistente.isPresent()){
-            return ResponseEntity.badRequest().body(new ErroResponseExceptions("Id já cadastrado").getMessage());
-        }
-
-        animalRepository.save(animal);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(animal);
+    public ResponseEntity<Object> create(@Valid @RequestBody Animal animal){
+        // if(result.hasErrors()) return ResponseEntity.badRequest().body(new
+        // RestValidationError("erro de validação"));
+        log.info("cadastrando animal: " + animal);
+        repository.save(animal);
+        return ResponseEntity
+            .created(animal.toEntityModel().getRequiredLink("self").toUri())
+            .body(animal.toEntityModel());
     }
 
-    //Put
+    //--------------------------------------------------------------------------------------
+    //PUT
     @PutMapping
-    public ResponseEntity<Animal> update(@Valid @RequestBody Animal animal){
+    public EntityModel<Animal> update(@PathVariable Integer id, @RequestBody @Valid Animal animal) {
+        log.info("atualizando animal com id " + id);
+        getAnimal(id);
 
-        animalRepository.findById(animal.getId())
-                .orElseThrow(() -> new RestNotFoundException("Animal não encontrado"));
+        animal.setId(id);
+        repository.save(animal);
 
-        animalRepository.save(animal);
-        return ResponseEntity.ok().body(animal);
+        return animal.toEntityModel();
     }
 
+    //--------------------------------------------------------------------------------------
     // DELETE
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Animal> delete(@PathVariable Long id) {
+    @DeleteMapping("{id}")
+    public ResponseEntity<Animal> destroy(@PathVariable Integer id) {
+        log.info("apagando animal com id " + id);
+        var animal = getAnimal(id);
 
-        var animaisEncontrado = animalRepository.findById(id)
-                .orElseThrow(() -> new RestNotFoundException("Animal não encontrado"));
-        ;
-        animalRepository.delete(animaisEncontrado);
+        repository.delete(animal);
 
         return ResponseEntity.noContent().build();
     }
 
+    //--------------------------------------------------------------------------------------
+
+
+    private Animal getAnimal(Integer id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RestNotFoundException("animal não encontrada"));
+    }
 }

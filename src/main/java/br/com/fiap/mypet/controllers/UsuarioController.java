@@ -1,8 +1,9 @@
 package br.com.fiap.mypet.controllers;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,75 +17,63 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.fiap.mypet.exceptions.ErroResponseExceptions;
 import br.com.fiap.mypet.exceptions.RestNotFoundException;
 import br.com.fiap.mypet.models.Usuario;
 import br.com.fiap.mypet.repository.UsuarioRepository;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("api/usuario")
+@RequestMapping("/api/usuarios")
 public class UsuarioController {
+
+    Logger log = LoggerFactory.getLogger(getClass());
     
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioRepository repository;
 
     //Get all
     @GetMapping
-    public ResponseEntity<List<Usuario>> show(){
-        List<Usuario> usuarios = usuarioRepository.findAll();
-        
-        return usuarios.isEmpty()
-        ? ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        : ResponseEntity.ok(usuarios);
+    public List<Usuario> index() {
+        return repository.findAll();
     }
 
     //Get by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Usuario> show(@PathVariable Long id){
-
-        var usuariosEncontrados = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RestNotFoundException("Usuário não encontrado"));
-        ;
-        return ResponseEntity.ok(usuariosEncontrados);
+    @GetMapping("{id}")
+    public ResponseEntity<Usuario> show(@PathVariable Integer id) {
+        log.info("buscando usuario com id " + id);
+        return ResponseEntity.ok(getUsuario(id));
     }
 
     //Post
     @ResponseBody
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody Usuario usuario){
-        Optional<Usuario> usuarioExistente = usuarioRepository.findBycpf(usuario.getCpf());
-
-        if(usuarioExistente.isPresent()){
-            return ResponseEntity.badRequest().body(new ErroResponseExceptions("CPF já cadastrado").getMessage());
-        }
-
-        usuarioRepository.save(usuario);
-
+    public ResponseEntity<Usuario> create(@RequestBody @Valid Usuario usuario) {
+        log.info("cadastrando usuario: " + usuario);
+        repository.save(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
     }
 
     //Put
-    @PutMapping
-    public ResponseEntity<Usuario> update(@Valid @RequestBody Usuario usuario){
-
-        usuarioRepository.findById(usuario.getId())
-                .orElseThrow(() -> new RestNotFoundException("Usuario não encontrado"));
-
-        usuarioRepository.save(usuario);
-        return ResponseEntity.ok().body(usuario);
+    @PutMapping("{id}")
+    public ResponseEntity<Usuario> update(@PathVariable Integer id, @RequestBody @Valid Usuario usuario) {
+        log.info("atualizando usuario com id " + id);
+        getUsuario(id);
+        usuario.setId(id);
+        repository.save(usuario);
+        return ResponseEntity.ok(usuario);
     }
 
     // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Usuario> delete(@PathVariable Long id) {
-
-        var usuariosEncontrado = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RestNotFoundException("usuario não encontrado"));
-        ;
-        usuarioRepository.delete(usuariosEncontrado);
-
+    public ResponseEntity<Usuario> destroy(@PathVariable Integer id) {
+        log.info("apagando usuario com id " + id);
+        repository.delete(getUsuario(id));
         return ResponseEntity.noContent().build();
     }
 
+
+    private Usuario getUsuario(Integer id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RestNotFoundException("usuario não encontrado"));
+    }
 }

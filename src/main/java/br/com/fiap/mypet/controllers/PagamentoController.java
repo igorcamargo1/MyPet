@@ -1,9 +1,12 @@
 package br.com.fiap.mypet.controllers;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,75 +19,84 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.fiap.mypet.exceptions.ErroResponseExceptions;
 import br.com.fiap.mypet.exceptions.RestNotFoundException;
 import br.com.fiap.mypet.models.Pagamento;
 import br.com.fiap.mypet.repository.PagamentoRepository;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("api/pagamento")
+@RequestMapping("/api/pagamento")
 public class PagamentoController {
-    
+
+    Logger log = LoggerFactory.getLogger(PagamentoController.class);
+
     @Autowired
-    private PagamentoRepository pagamentoRepository;
+    PagamentoRepository repository;
 
-    //Get all
-    @GetMapping
-    public ResponseEntity<List<Pagamento>> show(){
-        List<Pagamento> pagamentos = pagamentoRepository.findAll();
-        
-        return pagamentos.isEmpty()
-        ? ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        : ResponseEntity.ok(pagamentos);
-    }
+    @Autowired
+    PagedResourcesAssembler<Object> assembler;
 
-    //Get by ID
+    // --------------------------------------------------------------------------------------
+    // Get by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Pagamento> show(@PathVariable Long id){
-
-        var pagamentosEncontrados = pagamentoRepository.findById(id)
-                .orElseThrow(() -> new RestNotFoundException("Pagamento não encontrado"));
-        ;
-        return ResponseEntity.ok(pagamentosEncontrados);
+    public EntityModel<Pagamento> show(@PathVariable Integer id) {
+        log.info("buscando pagamento com id " + id);
+        return getPagamento(id).toEntityModel();
     }
 
-    //Post
+    // --------------------------------------------------------------------------------------
+    // GET ALL
+    @GetMapping
+    public ResponseEntity<List<Pagamento>> index() {
+        List<Pagamento> pagamento = repository.findAll();
+
+        return pagamento.isEmpty()
+                ? ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+                : ResponseEntity.ok(pagamento);
+    }
+
+    // --------------------------------------------------------------------------------------
+    // POST
     @ResponseBody
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody Pagamento pagamento){
-        Optional<Pagamento> pagamentoExistente = pagamentoRepository.findById(pagamento.getId());
-
-        if(pagamentoExistente.isPresent()){
-            return ResponseEntity.badRequest().body(new ErroResponseExceptions("Id já cadastrado").getMessage());
-        }
-
-        pagamentoRepository.save(pagamento);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(pagamento);
+    public ResponseEntity<Object> create(@Valid @RequestBody Pagamento pagamento) {
+        // if(result.hasErrors()) return ResponseEntity.badRequest().body(new
+        // RestValidationError("erro de validação"));
+        log.info("cadastrando pagamento: " + pagamento);
+        repository.save(pagamento);
+        return ResponseEntity
+                .created(pagamento.toEntityModel().getRequiredLink("self").toUri())
+                .body(pagamento.toEntityModel());
     }
 
-    //Put
-    @PutMapping
-    public ResponseEntity<Pagamento> update(@Valid @RequestBody Pagamento pagamento){
+    // --------------------------------------------------------------------------------------
+    // Delete
+    @DeleteMapping("{id}")
+    public ResponseEntity<Pagamento> destroy(@PathVariable Integer id) {
+        log.info("apagando pagamento com id " + id);
+        var pagamento = getPagamento(id);
 
-        pagamentoRepository.findById(pagamento.getId())
-                .orElseThrow(() -> new RestNotFoundException("Pagamento não encontrado"));
-
-        pagamentoRepository.save(pagamento);
-        return ResponseEntity.ok().body(pagamento);
-    }
-
-    // DELETE
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Pagamento> delete(@PathVariable Long id) {
-
-        var pagamentosEncontrado = pagamentoRepository.findById(id)
-                .orElseThrow(() -> new RestNotFoundException("Pagamento não encontrado"));
-        ;
-        pagamentoRepository.delete(pagamentosEncontrado);
+        repository.delete(pagamento);
 
         return ResponseEntity.noContent().build();
+    }
+
+    // --------------------------------------------------------------------------------------
+    // Put
+    @PutMapping
+    public EntityModel<Pagamento> update(@PathVariable Integer id, @RequestBody @Valid Pagamento pagamento) {
+        log.info("atualizando pagamento com id " + id);
+        getPagamento(id);
+
+        pagamento.setId(id);
+        repository.save(pagamento);
+
+        return pagamento.toEntityModel();
+    }
+
+    private Pagamento getPagamento(Integer id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RestNotFoundException("tipo de pagamento não encontrada"));
     }
 
 }

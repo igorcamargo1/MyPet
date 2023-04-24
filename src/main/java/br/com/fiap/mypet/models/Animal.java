@@ -1,26 +1,34 @@
 package br.com.fiap.mypet.models;
 
+import org.springframework.hateoas.EntityModel;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+import br.com.fiap.mypet.controllers.AnimalController;
+import br.com.fiap.mypet.controllers.UsuarioController;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
-@EqualsAndHashCode(of= "id")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 public class Animal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @NotBlank
     private String nome;
@@ -36,5 +44,17 @@ public class Animal {
 
     @NotBlank
     private boolean vacinado;
+
+    @ManyToOne
+    private Usuario usuario;
+
+    public EntityModel<Animal> toEntityModel(){
+        return EntityModel.of(
+            this,
+            linkTo(methodOn(AnimalController.class).show(id)).withSelfRel(),
+            linkTo(methodOn(AnimalController.class).destroy(id)).withRel("delete"),
+            linkTo(methodOn(UsuarioController.class).show(this.getUsuario().getId())).withRel("usuario")
+            );
+    }
 
 }
