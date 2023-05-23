@@ -6,7 +6,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import br.com.fiap.mypet.controllers.AnimalController;
-import br.com.fiap.mypet.controllers.UsuarioController;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -52,8 +51,7 @@ public class Animal {
         return EntityModel.of(
             this,
             linkTo(methodOn(AnimalController.class).show(id)).withSelfRel(),
-            linkTo(methodOn(AnimalController.class).destroy(id)).withRel("delete"),
-            linkTo(methodOn(UsuarioController.class).show(this.getUsuario().getId())).withRel("usuario")
+            linkTo(methodOn(AnimalController.class).destroy(id)).withRel("delete")
             );
     }
 

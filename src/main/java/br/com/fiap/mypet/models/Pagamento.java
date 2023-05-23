@@ -3,7 +3,7 @@ package br.com.fiap.mypet.models;
 import org.springframework.hateoas.EntityModel;
 
 import br.com.fiap.mypet.controllers.PagamentoController;
-import br.com.fiap.mypet.controllers.UsuarioController;
+
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -42,8 +42,7 @@ public class Pagamento {
         return EntityModel.of(
             this,
             linkTo(methodOn(PagamentoController.class).show(id)).withSelfRel(),
-            linkTo(methodOn(PagamentoController.class).destroy(id)).withRel("delete"),
-            linkTo(methodOn(UsuarioController.class).show(this.getUsuario().getId())).withRel("usuario")
+            linkTo(methodOn(PagamentoController.class).destroy(id)).withRel("delete")
             );
     }
 
