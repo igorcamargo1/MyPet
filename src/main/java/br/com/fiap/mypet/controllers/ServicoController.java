@@ -22,12 +22,17 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.fiap.mypet.exceptions.RestNotFoundException;
 import br.com.fiap.mypet.models.Servico;
 import br.com.fiap.mypet.repository.ServicoRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/servico")
+@SecurityRequirement(name = "bearer-key")
 public class ServicoController {
-    
+
     Logger log = LoggerFactory.getLogger(ServicoController.class);
 
     @Autowired
@@ -36,40 +41,46 @@ public class ServicoController {
     @Autowired
     PagedResourcesAssembler<Object> assembler;
 
-    //--------------------------------------------------------------------------------------
-    //Get by ID
+    // --------------------------------------------------------------------------------------
+    // Get by ID
     @GetMapping("/{id}")
+    @Operation(summary = "Detalhes do servico", description = "Retorna os dados de uma servico passada pelo parâmetro de path id")
     public EntityModel<Servico> show(@PathVariable Integer id) {
-        log.info("buscando servico com id " + id);
+        log.info("buscando despesa com id " + id);
         return getServico(id).toEntityModel();
     }
-    //--------------------------------------------------------------------------------------
-    //GET ALL
+
+    // --------------------------------------------------------------------------------------
+    // GET ALL
     @GetMapping
-    public ResponseEntity<List<Servico>> index(){
-        List<Servico> servico = repository.findAll();
-        
-        return servico.isEmpty()
-        ? ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        : ResponseEntity.ok(servico);
+    public ResponseEntity<List<Servico>> index() {
+        List<Servico> servicos = repository.findAll();
+
+        return servicos.isEmpty()
+                ? ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+                : ResponseEntity.ok(servicos);
     }
 
-    //--------------------------------------------------------------------------------------
-    //POST
+    // --------------------------------------------------------------------------------------
+    // POST
     @ResponseBody
     @PostMapping
-    public ResponseEntity<Object> create(@Valid @RequestBody Servico servico){
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "servico cadastrada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "dados inválidos, a validação falhou")
+    })
+    public ResponseEntity<Object> create(@RequestBody @Valid Servico servico) {
         // if(result.hasErrors()) return ResponseEntity.badRequest().body(new
         // RestValidationError("erro de validação"));
         log.info("cadastrando servico: " + servico);
         repository.save(servico);
         return ResponseEntity
-            .created(servico.toEntityModel().getRequiredLink("self").toUri())
-            .body(servico.toEntityModel());
+                .created(servico.toEntityModel().getRequiredLink("self").toUri())
+                .body(servico.toEntityModel());
     }
-    
-    //--------------------------------------------------------------------------------------
-    //Delete
+
+    // --------------------------------------------------------------------------------------
+    // Delete
     @DeleteMapping("{id}")
     public ResponseEntity<Servico> destroy(@PathVariable Integer id) {
         log.info("apagando servico com id " + id);
@@ -80,8 +91,8 @@ public class ServicoController {
         return ResponseEntity.noContent().build();
     }
 
-    //--------------------------------------------------------------------------------------
-    //Put
+    // --------------------------------------------------------------------------------------
+    // Put
     @PutMapping("{id}")
     public EntityModel<Servico> update(@PathVariable Integer id, @RequestBody @Valid Servico servico) {
         log.info("atualizando servico com id " + id);
